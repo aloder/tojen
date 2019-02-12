@@ -2,7 +2,7 @@ jenjen
 ======
 
 jenjen is a code generator that generates
-jennifer[http://www.github.com/dave/jennifer] code from a existing file.
+[jennifer](http://www.github.com/dave/jennifer) code from a existing file.
 
 ## Why?
 
