@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/aloder/jenjen/jenjen"
+	"github.com/aloder/tojen/gen"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ Echo works a lot like print, except it has a child command.`,
 			if packageName == "" {
 				packageName = "main"
 			}
-			file := jenjen.GenerateFile(b, packageName, genMain)
+			file := gen.GenerateFile(b, packageName, genMain)
 			retBytes := &bytes.Buffer{}
 			err = file.Render(retBytes)
 			if err != nil {
@@ -60,7 +60,7 @@ Echo works a lot like print, except it has a child command.`,
 	}
 
 	var rootCmd = &cobra.Command{
-		Use:   "jenjen",
+		Use:   "tojen",
 		Short: "Generate jennifer code from file",
 		Long:  `Generate jennifer code from a file with the command gen`,
 	}

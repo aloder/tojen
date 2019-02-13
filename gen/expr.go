@@ -1,4 +1,4 @@
-package jenjen
+package gen
 
 import (
 	"go/ast"

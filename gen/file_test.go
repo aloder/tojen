@@ -1,11 +1,11 @@
-package jenjen
+package gen
 
 import (
 	"bytes"
 	"go/format"
 	"testing"
 
-	"github.com/aloder/jenjen/run"
+	"github.com/aloder/tojen/run"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
