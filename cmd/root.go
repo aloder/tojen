@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -13,6 +12,8 @@ import (
 func Execute() {
 	var packageName string
 	var genMain bool
+	var formating bool
+
 	var cmdGen = &cobra.Command{
 		Use:   "gen [path to file] [output path]",
 		Short: "Generate code from file",
@@ -28,9 +29,7 @@ Echo works a lot like print, except it has a child command.`,
 			if packageName == "" {
 				packageName = "main"
 			}
-			file := gen.GenerateFile(b, packageName, genMain)
-			retBytes := &bytes.Buffer{}
-			err = file.Render(retBytes)
+			retBytes, err := gen.GenerateFileBytes(b, packageName, genMain, formating)
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
@@ -41,7 +40,7 @@ Echo works a lot like print, except it has a child command.`,
 					fmt.Println(err)
 					os.Exit(1)
 				}
-				_, err = osFile.Write(retBytes.Bytes())
+				_, err = osFile.Write(retBytes)
 				if err != nil {
 					fmt.Println(err)
 					os.Exit(1)
@@ -54,7 +53,7 @@ Echo works a lot like print, except it has a child command.`,
 				}
 				os.Exit(0)
 			}
-			fmt.Println(retBytes.String())
+			fmt.Println(string(retBytes))
 			os.Exit(0)
 		},
 	}
@@ -66,6 +65,8 @@ Echo works a lot like print, except it has a child command.`,
 	}
 	cmdGen.Flags().StringVarP(&packageName, "package", "p", "", "Name of package")
 	cmdGen.Flags().BoolVarP(&genMain, "main", "m", false, "Generate main function")
+
+	cmdGen.Flags().BoolVarP(&formating, "formatted", "f", false, "Format the generated code EXPERIMENTAL")
 
 	rootCmd.AddCommand(cmdGen)
 	rootCmd.Execute()

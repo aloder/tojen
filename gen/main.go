@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"bytes"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -23,6 +24,30 @@ func funcDecl(s *ast.FuncDecl) jen.Code {
 }
 
 var paths = map[string]string{}
+var formating = false
+
+func GenerateFileBytes(s []byte, packName string, main bool, formating bool) ([]byte, error) {
+	file := GenerateFile(s, packName, main)
+	b := &bytes.Buffer{}
+	err := file.Render(b)
+	if err != nil {
+		return s, err
+	}
+	ret := b.Bytes()
+	if formating {
+		ret = formatNulls(ret)
+		ret = formatStructs(ret)
+
+		ret = formatBlock(ret)
+
+		ret = formatParams(ret)
+		ret, err = goFormat(ret)
+		if err != nil {
+			return ret, err
+		}
+	}
+	return ret, nil
+}
 
 // GenerateFile Generates a jennifer file given a series of bytes a package name
 // and if you want a main function or not
