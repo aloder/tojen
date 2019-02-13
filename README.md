@@ -1,7 +1,7 @@
 tojen
 ======
 
-jenjen is a code generator that generates
+tojen is a code generator that generates
 [jennifer](http://www.github.com/dave/jennifer) code from a existing file.
 
 ## Why?
@@ -23,12 +23,12 @@ go install github.com/aloder/jenjen
 ```
 In your terminal
 ```
-jenjen gen [source file]
+tojen gen [source file]
 ```
 This just takes the sourcefile and outputs the code in the terminal.
 
 ```
-jenjen gen [source file] [output file]
+tojen gen [source file] [output file]
 ```
 This takes the source file and outputs the code in the specified file
 
@@ -51,7 +51,7 @@ type User struct {
 
 Running the command 
 
-`jenjen gen [path to user file] [output file]`
+`tojen gen [path to user file] [output file]`
 
 Generates this
 ```go
