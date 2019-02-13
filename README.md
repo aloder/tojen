@@ -19,7 +19,7 @@ I created this project to further bridge the gap between the advantages of the t
 The command line is all you need.
 
 ```
-go install github.com/aloder/jenjen
+go install github.com/aloder/tojen
 ```
 In your terminal
 ```
