@@ -1,4 +1,4 @@
-jenjen
+tojen
 ======
 
 jenjen is a code generator that generates
