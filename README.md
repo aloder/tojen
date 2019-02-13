@@ -10,6 +10,9 @@ Well writing code that generates code is tedious. This tool removes some of the
 tedium by setting up a base that can be changed and extended to suit your needs
 for code generation.
 
+This was mostly inspired by the functionality of the go [text/template](https://golang.org/pkg/text/template/) system. The advantage is that static code was easy to write, but dynamic typesafe code was a big challenge. Also as the project grew the templates would get harder and harder to read. 
+
+I created this project to further bridge the gap between the advantages of the text/template and keeping all the generation in the go language with jennifer. 
 
 ## How?
 
