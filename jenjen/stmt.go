@@ -1,4 +1,4 @@
-package main
+package jenjen
 
 import (
 	"go/ast"
@@ -41,9 +41,7 @@ func stmt(s ast.Stmt) jen.Code {
 		case token.FALLTHROUGH:
 			return ret.Dot("Fallthrough").Call()
 		}
-		panic("Branch Statement Token: " + t.Tok.String() + " not handled")
 	case *ast.BlockStmt:
-		// DOnt know how to format this does not start with jen.
 		return blockStatement(t)
 	case *ast.IfStmt:
 		var cond []jen.Code
@@ -57,7 +55,7 @@ func stmt(s ast.Stmt) jen.Code {
 			cond...,
 		).Add(blockStatement(t.Body))
 		if t.Else != nil {
-			ret.Dot("Else").Call().Add(blockStatement(t.Else.(*ast.BlockStmt)))
+			ret.Dot("Else").Call().Add(stmt(t.Else))
 		}
 		return ret2
 	case *ast.CaseClause:
@@ -89,11 +87,14 @@ func stmt(s ast.Stmt) jen.Code {
 		}
 		return ret.Dot("Case").Call(stmt(t.Comm)).Dot("Block").Call(stmts(t.Body)...)
 	case *ast.SelectStmt:
-		return ret.Dot("Select").Add(blockStatement(t.Body))
+		return ret.Dot("Select").Call().Add(blockStatement(t.Body))
 	case *ast.ForStmt:
 		var code []jen.Code
 		if t.Init != nil {
 			code = append(code, stmt(t.Init))
+		}
+		if t.Init == nil && t.Cond != nil && t.Post != nil {
+			code = append(code, jen.Id("jen").Dot("Empty").Call())
 		}
 		if t.Cond != nil {
 			code = append(code, jen.Id("jen").Add(genExpr(t.Cond)))

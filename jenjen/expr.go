@@ -1,4 +1,4 @@
-package main
+package jenjen
 
 import (
 	"go/ast"
@@ -42,21 +42,24 @@ func genExpr(s ast.Expr) jen.Code {
 	case *ast.Ident:
 		return jen.Dot("Id").Call(jen.Lit(t.String()))
 	case *ast.Ellipsis:
-		return jen.Add(genExpr(t.Elt)).Op("...")
+		return jen.Dot("Op").Call(jen.Lit("...")).Add(genExpr(t.Elt))
 	case *ast.BasicLit:
 		return basicLit(t)
 	case *ast.FuncLit:
-		return jen.Func().Add(funcType(t.Type)).Add(blockStatement(t.Body))
+		return jen.Dot("Func").Call().Add(funcType(t.Type)).Add(blockStatement(t.Body))
 	case *ast.CompositeLit:
 		return jen.Add(genExpr(t.Type)).Dot("Values").Call(genExprsCode2(t.Elts)...)
 	case *ast.ParenExpr:
-		return jen.Dot("Parens").Call(genExpr(t.X))
+		return jen.Dot("Parens").Call(jen.Id("jen").Add(genExpr(t.X)))
 	case *ast.SelectorExpr:
-		path, ok := paths[t.X.(*ast.Ident).String()]
+		dent, ok := t.X.(*ast.Ident)
 		if ok {
-			return jen.Dot("Qual").Call(jen.Lit(path), jen.Lit(t.Sel.String()))
+			path, ok := paths[dent.String()]
+			if ok {
+				return jen.Dot("Qual").Call(jen.Lit(path), jen.Lit(t.Sel.String()))
+			}
 		}
-		return jen.Dot("Id").Call(jen.Lit(t.X.(*ast.Ident).String())).Dot("Dot").Call(jen.Lit(t.Sel.String()))
+		return jen.Add(genExpr(t.X)).Dot("Dot").Call(jen.Lit(t.Sel.String()))
 	case *ast.IndexExpr:
 		return jen.Add(genExpr(t.X)).Dot("Index").Call(jen.Id("jen").Add(genExpr(t.Index)))
 	case *ast.SliceExpr:
@@ -84,7 +87,11 @@ func genExpr(s ast.Expr) jen.Code {
 		}
 		return ret2.Call(jen.Id("jen").Add(genExpr(t.Type)))
 	case *ast.CallExpr:
-		return jen.Add(genExpr(t.Fun)).Dot("Call").Call(genExprsCode2(t.Args)...)
+		args := genExprsCode2(t.Args)
+		if t.Ellipsis.IsValid() {
+			args[len(args)-1] = jen.Add(args[len(args)-1]).Dot("Op").Call(jen.Lit("..."))
+		}
+		return jen.Add(genExpr(t.Fun)).Dot("Call").Call(args...)
 	case *ast.StarExpr:
 		return jen.Dot("Op").Call(jen.Lit("*")).Add(genExpr(t.X))
 	case *ast.UnaryExpr:
@@ -119,5 +126,4 @@ func genExpr(s ast.Expr) jen.Code {
 		return ret2.Add(genExpr(t.Value))
 	}
 	panic("Not Handled gen expr: " + reflect.TypeOf(s).String() + " at " + string(s.Pos()))
-	return nil
 }

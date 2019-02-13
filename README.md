@@ -15,5 +15,14 @@ for code generation.
 
 The command line is all you need.
 
+go install github.com/aloder/jenjen
+
+jenjen gen [source file]
+
+This just takes the sourcefile and outputs the code in the terminal.
+
+jenjen gen [source file] [output file]
+
+This takes the source file and outputs the code in the specified file
 
 

@@ -1,4 +1,4 @@
-package main
+package jenjen
 
 import (
 	"bytes"
@@ -21,6 +21,15 @@ var tests = []tcg{
 		`package main
 
 	func main() {}
+	`,
+	},
+	tcg{
+		"empty statement",
+		`package main
+
+	func main() {
+		;
+	}
 	`,
 	},
 
@@ -234,38 +243,187 @@ func main() {
 }
 `,
 	},
+	tcg{
+		"Select",
+		`package main
+
+func main() {
+	var c, c1, c2, c3, c4 chan int
+	var i1, i2 int
+	select {
+		case i1 = <- c1:
+			print("received", i1, " from c1")
+			print("more ")
+		case c2 <- i2:
+			print("again")
+		case  i3, ok := (<-c3):
+		default:
+			print("No communication")
+	}
+}
+`,
+	},
+	tcg{
+		"imports + annon",
+		`package main
+	import (
+	"fmt"
+	"io/ioutil"
+	_ "lib/math"
+	)
+		
+	func main() {
+		fmt.Println("Hello World!")
+		ioutil.TempDir("go", "fs")
+	}
+`,
+	},
+	tcg{
+		"function literal",
+		`package main
+	import (
+	"fmt"
+	"sort"
+	)
+		
+	func main() {
+		people := []string{"Alice", "Bob", "Dave"}
+		sort.Slice(people, func(i, j int) bool {
+			return len(people[i]) < len(people[j])
+		})
+		fmt.Println(people)
+	}
+`,
+	},
+	tcg{
+		"Escaped Characters",
+		`package main
+
+func main() {
+	print("\n")
+}`,
+	},
+	tcg{
+		"slices of slices",
+		`package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	board := [][]string{[]string{"_", "_", "_"},[]string{"_", "_", "_"},[]string{"_", "_", "_"}}
+	board[0][0] = "X"
+	board[2][2] = "O"
+	board[1][2] = "X"
+	board[1][0] = "O"
+	board[0][2] = "X"
+	for i := 0; i < len(board); i++ {
+		fmt.Printf("%s\n", strings.Join(board[i], " "))
+	}
+}`,
+	},
+	tcg{
+		"Ellipsis",
+		`package main
+
+import "fmt"
+
+func Sum(nums ...int) int {
+	res := 0
+	for _, n := range nums {
+		res += n
+	}
+	return res
+}
+func main() {
+	s := []int{1, 2, 3}
+	fmt.Println(Sum(s...))
+}`,
+	},
+	tcg{
+		"Triple Slice",
+		`package main
+
+func main() {
+	source := []string{"Apple", "Orange", "Plum", "Banana", "Grape"}
+	takeOneCapOne := source[2:3:3]
+	println(takeOneCapOne)
+}`,
+	},
+	tcg{
+		"Fibonacci channels",
+		`package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	fibonacci := func() chan uint64 {
+		c := make(chan uint64)
+		go func() {
+			var x, y uint64 = 0, 1
+			for ; y < (1 << 63); c <- y {
+				x, y = y, x+y
+			}
+			close(c)
+		}()
+		return c
+	}
+	c := fibonacci()
+	for x, ok := <-c; ok; x, ok = <-c {
+		time.Sleep(time.Second)
+		fmt.Println(x)
+	}
+}`,
+	},
+	tcg{
+		"Literals",
+		`package main
+
+func main() {
+	flo := 1.2
+	flo2 := -1.2
+	b := true
+	x := false
+	i := 1
+	str := "hello World"
+	ch := 'a'
+}`,
+	},
 }
 
 func TestFile(t *testing.T) {
-	t.Parallel()
 	for i, tc := range tests {
 		test := tc
 		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
 			fmtBytes, err := format.Source([]byte(test.Code))
 			if err != nil {
 				assert.Nil(t, errors.Wrap(err, "Formating error on number: "+string(i)+" name: "+test.Name))
 				return
 			}
 			goFormatTest := string(fmtBytes)
-			file := GenerateFile(fmtBytes, "main", true)
+			file := GenerateFile([]byte(test.Code), "main", true)
 			resultB := &bytes.Buffer{}
 			err = file.Render(resultB)
 			if err != nil {
-				assert.Nil(t, errors.Wrap(err, "Could not render test file: \n"+goFormatTest))
+				assert.Nil(t, err, "Could not render test file: \n"+goFormatTest)
 				return
 			}
 			ret, err := run.Exec(resultB.String())
 			if err != nil {
-				assert.Nil(t, errors.Wrap(err, "Could not execute rendered test file: \n"+resultB.String()))
+				assert.Nil(t, err, "Could not execute rendered test file: \n"+resultB.String())
 				return
 			}
 			fmtBytes, err = format.Source([]byte(*ret))
 			if err != nil {
-				assert.Nil(t, errors.Wrap(err, "Could not format file: \n"+*ret+"\n\n"+resultB.String()))
+				assert.Nil(t, err, "Could not format file: \n"+*ret+"\n\n"+resultB.String())
 				return
 			}
-			assert.Equal(t, goFormatTest, string(fmtBytes))
+			assert.Equal(t, goFormatTest, string(fmtBytes), "Gen Code: \n"+resultB.String())
 		})
 	}
 }
