@@ -29,4 +29,53 @@ jenjen gen [source file] [output file]
 ```
 This takes the source file and outputs the code in the specified file
 
+## Example
+
+
+Say you want to generate a static struct.
+
+
+
+`package model
+
+type User struct {
+  Name     string
+  Email    string
+  Password string
+}`
+
+Running the command 
+
+`jenjen gen [path to user file] [output file]`
+
+Generates this
+``
+package main
+
+import jen "github.com/dave/jennifer/jen"
+
+func genDeclAt16() jen.Code {
+	return jen.Null().Type().Id("User").Struct(
+		jen.Id("Name").Id("string"),
+		jen.Id("Email").Id("string"),
+		jen.Id("Password").Id("string"))
+}
+func genFile() *jen.File {
+	ret := jen.NewFile("model")
+	ret.Add(genDeclAt16())
+	return ret
+}``
+
+The Idea of this package is not to generate and forget but rather to establish a
+boilerplate that allows you to extend and modify.
+
+If I only wanted the user struct code I would modify it to this
+
+`func genUserStruct() jen.Code {
+	return jen.Type().Id("User").Struct(
+		jen.Id("Name").Id("string"),
+		jen.Id("Email").Id("string"),
+		jen.Id("Password").Id("string"))
+}`
+
 
