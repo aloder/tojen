@@ -17,9 +17,8 @@ func Execute() {
 	var cmdGen = &cobra.Command{
 		Use:   "gen [path to file] [output path]",
 		Short: "Generate code from file",
-		Long: `echo is for echoing anything back.
-Echo works a lot like print, except it has a child command.`,
-		Args: cobra.MinimumNArgs(1),
+		Long:  `Generate code from a .go file. If output path is set then it will write the generated code to the output path, otherwise it will print it out to the console.`,
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			b, err := ioutil.ReadFile(args[0])
 			if err != nil {
@@ -64,7 +63,7 @@ Echo works a lot like print, except it has a child command.`,
 		Long:  `Generate jennifer code from a file with the command gen`,
 	}
 	cmdGen.Flags().StringVarP(&packageName, "package", "p", "", "Name of package")
-	cmdGen.Flags().BoolVarP(&genMain, "main", "m", false, "Generate main function")
+	cmdGen.Flags().BoolVarP(&genMain, "main", "m", false, "Generate main function that prints out the generated code when called -- used for testing.")
 
 	cmdGen.Flags().BoolVarP(&formating, "formatted", "f", false, "Format the generated code EXPERIMENTAL")
 
