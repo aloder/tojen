@@ -32,12 +32,53 @@ tojen gen [source file] [output file]
 ```
 This takes the source file and outputs the code in the specified file
 
-## Example
+## Examples
 
+### Hello World
+
+File main.go is defined as:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+        fmt.Println("Hello World!")
+}
+```
+
+Running command:
+```
+tojen gen main.go
+```
+
+Will print out:
+
+```go
+package main
+
+import jen "github.com/dave/jennifer/jen"
+
+func genDeclAt15() jen.Code {
+        return jen.Null()
+}
+func genFuncmain() jen.Code {
+        return jen.Func().Id("main").Params().Block(jen.Qual("fmt", "Println").Call(jen.Lit("Hello World!")))
+}
+func genFile() *jen.File {
+        ret := jen.NewFile("main")
+        ret.Add(genDeclAt15())
+        ret.Add(genFuncmain())
+        return ret
+}
+```
+
+It print out to the console because there was no secondary argument. This is useful for writing out simple end results that you would like jennifer to write then copying them into your code. If you would like to save the file, set the second argument.
+
+### Static Struct
 
 Say you want to generate a static struct.
-
-
 
 ```go
 package model
