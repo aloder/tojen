@@ -128,3 +128,6 @@ func genUserStruct() jen.Code {
 ```
 Now we have usable generation of static code that can be used in a project using jennifer. 
 
+## Notes
+
+Feel free to create an issue if you are having a problem or have a feature request. Pull requests are welcome as well.
