@@ -92,7 +92,9 @@ type User struct {
 
 Running the command 
 
-`tojen gen [path to user file] [output file]`
+```
+tojen gen [path to user file] [output file]
+```
 
 Generates this
 ```go
