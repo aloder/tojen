@@ -15,6 +15,8 @@ func stmt(s ast.Stmt) jen.Code {
 		return declStmt(t)
 	case *ast.GoStmt:
 		return goStmt(t)
+	case *ast.DeferStmt:
+		return deferStmt(t)
 	case *ast.EmptyStmt:
 		return emptyStmt(t)
 	case *ast.LabeledStmt:
@@ -68,6 +70,11 @@ func exprStmt(t *ast.ExprStmt) jen.Code {
 func goStmt(t *ast.GoStmt) jen.Code {
 	ret := jen.Id("jen")
 	return ret.Dot("Go").Call().Add(genExpr(t.Call))
+}
+
+func deferStmt(t *ast.DeferStmt) jen.Code {
+	ret := jen.Id("jen")
+	return ret.Dot("Defer").Call().Add(genExpr(t.Call))
 }
 
 func labeledStmt(t *ast.LabeledStmt) jen.Code {

@@ -32,7 +32,14 @@ var tests = []tcg{
 	}
 	`,
 	},
-
+	tcg{
+		"defer statement",
+		`package main
+	func main() {
+		defer func() {}()
+	}
+	`,
+	},
 	tcg{
 		"var declaration",
 		`package main
