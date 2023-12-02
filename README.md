@@ -118,7 +118,7 @@ func genFile() *jen.File {
 The Idea of this package is not to generate and forget but rather to establish a
 boilerplate that allows you to extend and modify.
 
-If I only wanted the user struct code I would modify it to this
+If I only wanted the user struct code I would modify it to this:
 
 ```go
 func genUserStruct() jen.Code {
