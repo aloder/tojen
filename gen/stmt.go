@@ -4,6 +4,7 @@ import (
 	"go/ast"
 	"go/token"
 	"reflect"
+	"strconv"
 
 	"github.com/dave/jennifer/jen"
 )
@@ -52,7 +53,7 @@ func stmt(s ast.Stmt) jen.Code {
 	case *ast.RangeStmt:
 		return rangeStmt(t)
 	}
-	panic("Not Handled: " + reflect.TypeOf(s).String() + " at " + string(s.Pos()))
+	panic("Not Handled: " + reflect.TypeOf(s).String() + " at " + strconv.Itoa(int(s.Pos())))
 }
 
 func declStmt(t *ast.DeclStmt) jen.Code {

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/aloder/tojen/gen"
@@ -20,7 +19,7 @@ func Execute() {
 		Long:  `Generate code from a .go file. If output path is set then it will write the generated code to the output path, otherwise it will print it out to the console.`,
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			b, err := ioutil.ReadFile(args[0])
+			b, err := os.ReadFile(args[0])
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)

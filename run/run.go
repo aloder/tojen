@@ -1,7 +1,6 @@
 package run
 
 import (
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -9,7 +8,7 @@ import (
 
 // Exec executes a golang string
 func Exec(code string) (*string, error) {
-	dir, err := ioutil.TempDir("", "goexec")
+	dir, err := os.MkdirTemp("", "goexec")
 	if err != nil {
 		return nil, err
 	}
